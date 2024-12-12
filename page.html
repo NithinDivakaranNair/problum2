@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic User Table</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        button {
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Star Wars Characters</h1>
+    <button id="addRecord">Add Record</button>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Height</th>
+                <th>Mass</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="userTable">
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById('addRecord').addEventListener('click', async () => {
+            const randomId = Math.floor(Math.random() * 82) + 1; // SWAPI has 82 characters
+            const apiUrl = `https://swapi.dev/api/people/${randomId}/`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+
+                const userData = await response.json();
+                addUserToTable(userData);
+            } catch (error) {
+                console.error('Error fetching user:', error);
+            }
+        });
+
+        function addUserToTable(user) {
+            const tableBody = document.getElementById('userTable');
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.name}</td>
+                <td>${user.height}</td>
+                <td>${user.mass}</td>
+                <td><button class="delete">Delete</button></td>
+            `;
+
+            row.querySelector('.delete').addEventListener('click', () => {
+                row.remove();
+            });
+
+            tableBody.appendChild(row);
+        }
+    </script>
+</body>
+</html>
